@@ -1,4 +1,4 @@
-mehdoh-xmpp-bot
+MehDoh!-xmpp-bot
 ===============
 
-The mehdoh Chat XMPP bot
+The MehDoh! Chat XMPP bot
