@@ -7,6 +7,8 @@ __author__ = 'igorkhomenko'
 import sleekxmpp
 from sleekxmpp.xmlstream import ET
 
+import commands_manager
+
 import logging
 logging.basicConfig()
 
@@ -54,18 +56,41 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         self.add_event_handler("muc::%s::got_online" % self.room,
                                self.muc_online)
 
-    def send_msg(self, text="testing"):
+    def send_group_msg(self, text="testing"):
         new_message = self.make_message(mto=room_jid,
                       mbody=text,
                       mtype='groupchat')
 
         extra_params_out = ET.Element('{jabber:client}extraParams')
+        #
         dialog_id_out = ET.Element('{}dialog_id')
         dialog_id_out.text = dialog_id
         extra_params_out.append(dialog_id_out)
+        #
+        save_to_history_out = ET.Element('{}save_to_history')
+        save_to_history_out.text = "1"
+        extra_params_out.append(save_to_history_out)
+        #
         new_message.append(extra_params_out)
 
-        print("sending a message: " + str(new_message))
+        print("sending a group message: " + str(new_message))
+
+        new_message.send()
+
+    def send_private_msg(self, to=None, text="testing"):
+        new_message = self.make_message(mto=to,
+                      mbody=text,
+                      mtype='chat')
+
+        extra_params_out = ET.Element('{jabber:client}extraParams')
+        #
+        save_to_history_out = ET.Element('{}save_to_history')
+        save_to_history_out.text = "1"
+        extra_params_out.append(save_to_history_out)
+        #
+        new_message.append(extra_params_out)
+
+        print("sending a private message: " + str(new_message))
 
         new_message.send()
 
@@ -95,6 +120,21 @@ class MehDohBot(sleekxmpp.ClientXMPP):
     def message(self, msg):
         print(msg)
 
+        from_jid = msg['from']
+
+        # try to extract command
+        body = msg['body']
+        body_split = body.split(" ")
+        if len(body_split) > 0:
+            potential_command = body_split[0]
+            if potential_command in commands_manager.__COMMANDS_LIST__:
+                if potential_command == commands_manager.__LIST_COMMAND__:
+                    self.send_private_msg(from_jid, str(commands_manager.__LIST_COMMAND__))
+                elif potential_command == commands_manager.__ECHO_COMMAND__:
+                    pass
+
+
+
 
     def muc_message(self, msg):
         #
@@ -115,7 +155,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         if user_id in ujid and ptype is "available":
             print("joined room")
-            self.send_msg()
+            self.send_group_msg()
 
 
 if __name__ == '__main__':
