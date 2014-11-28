@@ -138,22 +138,20 @@ class MehDohBot(sleekxmpp.ClientXMPP):
             potential_command = body_split[0]
 
             print(potential_command)
+            dialog_id = self.extract_dialog_id(msg)
 
             index = None
             try:
                 index = commands_manager.__COMMANDS_LIST__.index(potential_command)
             except ValueError:
-                pass
+                text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__)
+                self.send_private_msg(dialog_id, text, from_jid)
             else:
-                dialog_id = self.extract_dialog_id(msg)
-                print(dialog_id)
-                if potential_command == commands_manager.__LIST_COMMAND__:
-                    text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__)
-                    self.send_private_msg(dialog_id, text, from_jid)
-                elif potential_command == commands_manager.__ECHO_COMMAND__:
+                if potential_command == commands_manager.__ECHO_COMMAND__:
                     text = ' '.join(body_split[1:])
                     self.send_private_msg(dialog_id, text, from_jid)
-                    pass
+
+
 
 
 
