@@ -8,3 +8,9 @@ __author__ = 'igorkhomenko'
 #
 __ECHO_COMMAND__ = "echo"
 __COMMANDS_LIST__ = [__ECHO_COMMAND__]
+
+def extract_potential_command(msg_text):
+    body_split = msg_text.split(" ")
+    if len(body_split) > 0:
+        potential_command = body_split[0]
+        return potential_command

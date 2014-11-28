@@ -91,6 +91,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         print("logged in")
 
         self.send_presence()
+
         self.plugin['xep_0045'].joinMUC(self.room,
                                         self.nick,
                                         maxhistory="1",
@@ -114,22 +115,21 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         # try to extract command
         body = msg['body']
-        body_split = body.split(" ")
-        if len(body_split) > 0:
-            potential_command = body_split[0]
 
-            print(potential_command)
-            dialog_id = utils.extract_dialog_id(msg)
+        potential_command = commands_manager.extract_potential_command(body)
+        print(potential_command)
 
-            try:
-                index = commands_manager.__COMMANDS_LIST__.index(potential_command)
-            except ValueError:
-                text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__) + ". To get an example of the command usage enter 'example <command>'"
+        dialog_id = utils.extract_dialog_id(msg)
+
+        try:
+            index = commands_manager.__COMMANDS_LIST__.index(potential_command)
+        except ValueError:
+            text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__) + ". To get an example of the command usage enter 'example <command>'"
+            self.send_private_msg(dialog_id, text, from_jid)
+        else:
+            if potential_command == commands_manager.__ECHO_COMMAND__:
+                text = body.replace(potential_command + " ", "", 1)
                 self.send_private_msg(dialog_id, text, from_jid)
-            else:
-                if potential_command == commands_manager.__ECHO_COMMAND__:
-                    text = ' '.join(body_split[1:])
-                    self.send_private_msg(dialog_id, text, from_jid)
 
     def muc_message(self, msg):
 
