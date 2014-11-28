@@ -12,14 +12,13 @@ import commands_manager
 import logging
 logging.basicConfig()
 
-app_id = "12496"
-user_id = "2015753"
-user_password = "mehdoh00"
-#dialog_id = "543e650c535c121b2000053d"
-dialog_id = "5474a58d535c12b4f9002b34"
+config = {"app_id": "12496",
+          "user_id": "2015753",
+          "user_password": "mehdoh00",
+          "dialog_id": "5474a58d535c12b4f9002b34"}
 
-user_jid = user_id + "-" + app_id + "@chat.quickblox.com"
-room_jid = app_id + "_" + dialog_id + "@muc.chat.quickblox.com"
+user_jid = config["user_id"] + "-" + config["app_id"] + "@chat.quickblox.com"
+room_jid = config["app_id"] + "_" + config["dialog_id"] + "@muc.chat.quickblox.com"
 
 
 class MehDohBot(sleekxmpp.ClientXMPP):
@@ -56,7 +55,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         self.add_event_handler("muc::%s::got_online" % self.room,
                                self.muc_online)
 
-    def send_group_msg(self, text="testing"):
+    def send_group_msg(self, dialog_id, text="testing"):
         new_message = self.make_message(mto=room_jid,
                       mbody=text,
                       mtype='groupchat')
@@ -77,12 +76,16 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         new_message.send()
 
-    def send_private_msg(self, to=None, text="testing"):
+    def send_private_msg(self, dialog_id, text="testing", to=None):
         new_message = self.make_message(mto=to,
                       mbody=text,
                       mtype='chat')
 
         extra_params_out = ET.Element('{jabber:client}extraParams')
+        #
+        dialog_id_out = ET.Element('{}dialog_id')
+        dialog_id_out.text = dialog_id
+        extra_params_out.append(dialog_id_out)
         #
         save_to_history_out = ET.Element('{}save_to_history')
         save_to_history_out.text = "1"
@@ -94,6 +97,12 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         new_message.send()
 
+    def extract_dialog_id(self, message):
+        """
+        Extract a dialog_id from a message
+        """
+        dialog_id_in = message.xml.find('{jabber:client}extraParams/{jabber:client}dialog_id')
+        return dialog_id_in.text
 
     def start(self, event):
         """
@@ -127,9 +136,20 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         body_split = body.split(" ")
         if len(body_split) > 0:
             potential_command = body_split[0]
-            if potential_command in commands_manager.__COMMANDS_LIST__:
+
+            print(potential_command)
+
+            index = None
+            try:
+                index = commands_manager.__COMMANDS_LIST__.index(potential_command)
+            except ValueError:
+                pass
+            else:
+                dialog_id = self.extract_dialog_id(msg)
+                print(dialog_id)
                 if potential_command == commands_manager.__LIST_COMMAND__:
-                    self.send_private_msg(from_jid, str(commands_manager.__LIST_COMMAND__))
+                    text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__)
+                    self.send_private_msg(dialog_id, text, from_jid)
                 elif potential_command == commands_manager.__ECHO_COMMAND__:
                     pass
 
@@ -153,20 +173,20 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         ujid = str(presence["muc"]["jid"])
         ptype = presence["type"]
 
-        if user_id in ujid and ptype is "available":
+        if config["user_id"] in ujid and ptype is "available":
             print("joined room")
-            self.send_group_msg()
+            self.send_group_msg(config["dialog_id"])
 
 
 if __name__ == '__main__':
     print("starting...")
 
-    room_nick = user_id
+    room_nick = config["user_id"]
 
     # Setup the MehDohBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
     # not matter.
-    xmpp = MehDohBot(user_jid, user_password, room_jid, room_nick)
+    xmpp = MehDohBot(user_jid, config["user_password"], room_jid, room_nick)
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0045') # Multi-User Chat
     xmpp.register_plugin('xep_0199') # XMPP Ping
