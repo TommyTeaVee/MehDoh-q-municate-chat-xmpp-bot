@@ -1,5 +1,7 @@
-__author__ = 'igorkhomenko'
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+__author__ = 'igorkhomenko'
 
 # 'list' - returns all commands. Example: 'list' - will return 'list, echo'
 # 'echo' - echoes current message. Example: 'echo hello amigo' - will return 'hello amigo' back

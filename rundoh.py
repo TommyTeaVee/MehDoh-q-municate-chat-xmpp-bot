@@ -3,11 +3,10 @@
 
 __author__ = 'igorkhomenko'
 
-
 import sleekxmpp
-from sleekxmpp.xmlstream import ET
 
 import commands_manager
+import utils
 
 import logging
 logging.basicConfig()
@@ -60,17 +59,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
                       mbody=text,
                       mtype='groupchat')
 
-        extra_params_out = ET.Element('{jabber:client}extraParams')
-        #
-        dialog_id_out = ET.Element('{}dialog_id')
-        dialog_id_out.text = dialog_id
-        extra_params_out.append(dialog_id_out)
-        #
-        save_to_history_out = ET.Element('{}save_to_history')
-        save_to_history_out.text = "1"
-        extra_params_out.append(save_to_history_out)
-        #
-        new_message.append(extra_params_out)
+        utils.add_extra_params(new_message, dialog_id)
 
         print("sending a group message: " + str(new_message))
 
@@ -81,28 +70,11 @@ class MehDohBot(sleekxmpp.ClientXMPP):
                       mbody=text,
                       mtype='chat')
 
-        extra_params_out = ET.Element('{jabber:client}extraParams')
-        #
-        dialog_id_out = ET.Element('{}dialog_id')
-        dialog_id_out.text = dialog_id
-        extra_params_out.append(dialog_id_out)
-        #
-        save_to_history_out = ET.Element('{}save_to_history')
-        save_to_history_out.text = "1"
-        extra_params_out.append(save_to_history_out)
-        #
-        new_message.append(extra_params_out)
+        utils.add_extra_params(new_message, dialog_id)
 
         print("sending a private message: " + str(new_message))
 
         new_message.send()
-
-    def extract_dialog_id(self, message):
-        """
-        Extract a dialog_id from a message
-        """
-        dialog_id_in = message.xml.find('{jabber:client}extraParams/{jabber:client}dialog_id')
-        return dialog_id_in.text
 
     def start(self, event):
         """
@@ -115,7 +87,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
                      event does not provide any additional
                      data.
         """
-        #self.get_roster()
+
         print("logged in")
 
         self.send_presence()
@@ -127,6 +99,15 @@ class MehDohBot(sleekxmpp.ClientXMPP):
                                         wait=True)
 
     def message(self, msg):
+        if msg['type'] == "groupchat":
+            return
+
+        # Ignore messages from offline storage, track only real time messages
+        delay_element  = msg.xml.find('{urn:xmpp:delay}delay')
+        if delay_element is not None:
+            return
+
+
         print(msg)
 
         from_jid = msg['from']
@@ -138,31 +119,25 @@ class MehDohBot(sleekxmpp.ClientXMPP):
             potential_command = body_split[0]
 
             print(potential_command)
-            dialog_id = self.extract_dialog_id(msg)
+            dialog_id = utils.extract_dialog_id(msg)
 
-            index = None
             try:
                 index = commands_manager.__COMMANDS_LIST__.index(potential_command)
             except ValueError:
-                text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__)
+                text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__) + ". To get an example of the command usage enter 'example <command>'"
                 self.send_private_msg(dialog_id, text, from_jid)
             else:
                 if potential_command == commands_manager.__ECHO_COMMAND__:
                     text = ' '.join(body_split[1:])
                     self.send_private_msg(dialog_id, text, from_jid)
 
-
-
-
-
-
     def muc_message(self, msg):
-        #
+
         # Ignore messages from offline storage, track only real time messages
-        #
         delay_element  = msg.xml.find('{urn:xmpp:delay}delay')
         if delay_element is not None:
             return
+
 
         print(msg)
 
@@ -187,9 +162,7 @@ if __name__ == '__main__':
     # have interdependencies, the order in which you register them does
     # not matter.
     xmpp = MehDohBot(user_jid, config["user_password"], room_jid, room_nick)
-    xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0045') # Multi-User Chat
-    xmpp.register_plugin('xep_0199') # XMPP Ping
 
     # Connect to the XMPP server and start processing XMPP stanzas.
     if xmpp.connect():
