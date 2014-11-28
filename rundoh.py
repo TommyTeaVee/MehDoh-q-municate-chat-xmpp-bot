@@ -151,6 +151,8 @@ class MehDohBot(sleekxmpp.ClientXMPP):
                     text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__)
                     self.send_private_msg(dialog_id, text, from_jid)
                 elif potential_command == commands_manager.__ECHO_COMMAND__:
+                    text = ' '.join(body_split[1:])
+                    self.send_private_msg(dialog_id, text, from_jid)
                     pass
 
 
