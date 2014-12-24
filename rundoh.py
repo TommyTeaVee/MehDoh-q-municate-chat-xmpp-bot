@@ -12,7 +12,7 @@ import logging
 logging.basicConfig()
 
 config = {"app_id": "12496",
-          "user_id": "2015753",
+          "user_id": "2118126",
           "user_password": "mehdoh00",
           "dialog_id": "5474a58d535c12b4f9002b34"}
 
@@ -92,12 +92,12 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         self.send_presence()
 
-        self.plugin['xep_0045'].joinMUC(self.room,
-                                        self.nick,
-                                        maxhistory="1",
-                                        # If a room password is needed, use:
-                                        # password=the_room_password,
-                                        wait=True)
+        # self.plugin['xep_0045'].joinMUC(self.room,
+        #                                 self.nick,
+        #                                 maxhistory="1",
+        #                                 # If a room password is needed, use:
+        #                                 # password=the_room_password,
+        #                                 wait=True)
 
     def message(self, msg):
         if msg['type'] == "groupchat":
@@ -124,10 +124,10 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         try:
             index = commands_manager.__COMMANDS_LIST__.index(potential_command)
         except ValueError:
-            text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__) + ". To get an example of the command usage enter 'example <command>'"
+            text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__) + ". To get an example of the command usage enter 'help <command>'"
             self.send_private_msg(dialog_id, text, from_jid)
         else:
-            if potential_command == commands_manager.__ECHO_COMMAND__:
+            if potential_command == commands_manager.EchoCommand.__COMMAND__:
                 text = body.replace(potential_command + " ", "", 1)
                 self.send_private_msg(dialog_id, text, from_jid)
 
