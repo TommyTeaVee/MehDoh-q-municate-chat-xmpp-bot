@@ -16,7 +16,7 @@ config = {"app_id": "12496",
           "user_password": "mehdoh00",
           "dialog_id": "5474a58d535c12b4f9002b34"}
 
-user_jid = config["user_id"] + "-" + config["app_id"] + "@chat.quickblox.com"
+user_jid = config["user_id"] + "-" + config["app_id"] + "@chat.quickblox.com/macbookpro"
 room_jid = config["app_id"] + "_" + config["dialog_id"] + "@muc.chat.quickblox.com"
 
 
@@ -121,15 +121,18 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         dialog_id = utils.extract_dialog_id(msg)
 
+        # trying to find a command
+        #
         try:
-            index = commands_manager.__COMMANDS_LIST__.index(potential_command)
-        except ValueError:
-            text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_LIST__) + ". To get an example of the command usage enter 'help <command>'"
+            command = commands_manager.__COMMANDS_DICTIONARY__[potential_command]
+        except KeyError:
+             # there is no such command
+             #
+            text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_DICTIONARY__.keys()) + ". To get an example of the command usage enter 'help <command>'"
             self.send_private_msg(dialog_id, text, from_jid)
         else:
-            if potential_command == commands_manager.EchoCommand.__COMMAND__:
-                text = body.replace(potential_command + " ", "", 1)
-                self.send_private_msg(dialog_id, text, from_jid)
+            command.process(msg, self)
+
 
     def muc_message(self, msg):
 

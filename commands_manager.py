@@ -3,6 +3,8 @@
 
 __author__ = 'igorkhomenko'
 
+import utils
+
 class Command:
     def __init__(self):
         self.command = None
@@ -15,31 +17,67 @@ class Command:
     def example_usage(self):
         return self.example_usage
 
+    def process(self, message, xmpp_client):
+        body = message['body']
+        global from_jid
+        from_jid = message['from']
+        global dialog_id
+        dialog_id = utils.extract_dialog_id(message)
+        global command_argument
+        command_argument = body.replace(self.command + " ", "", 1)
+
+    def __str__(self):
+        return self.command
+
 class PingCommand(Command):
-    __COMMAND__ = "ping"
+    __COMMAND_NAME__ = "ping"
 
     def __init__(self):
-        self.command = "ping"
+        self.command = PingCommand.__COMMAND_NAME__
         self.description = "Pings the bot."
         self.example_usage = "ping"
 
+    def process(self, message, xmpp_client):
+        Command.process(self, message, xmpp_client)
+
+        # send the result of a command processing
+        #
+        xmpp_client.send_private_msg(dialog_id, "pong", from_jid)
+
 class EchoCommand(Command):
-    __COMMAND__ = "echo"
+    __COMMAND_NAME__ = "echo"
 
     def __init__(self):
+        self.command = EchoCommand.__COMMAND_NAME__
         self.description = "Echoes the provided text."
         self.example_usage = "echo <text>"
 
+    def process(self, message, xmpp_client):
+        Command.process(self, message, xmpp_client)
+
+        # send the result of a command processing
+        #
+        xmpp_client.send_private_msg(dialog_id, command_argument, from_jid)
+
 class HelpCommand(Command):
-    __COMMAND__ = "help"
+    __COMMAND_NAME__ = "help"
 
     def __init__(self):
+        self.command = HelpCommand.__COMMAND_NAME__
         self.description = "Provides an example how to use a particular command."
         self.example_usage = "help <command>"
 
+    def process(self, message, xmpp_client):
+        Command.process(self, message, xmpp_client)
 
-__COMMANDS_LIST__ = [PingCommand.__COMMAND__, EchoCommand.__COMMAND__, HelpCommand.__COMMAND__]
+        # send the result of a command processing
+        #
+        xmpp_client.send_private_msg(dialog_id, "not implemented yet", from_jid)
 
+
+__COMMANDS_DICTIONARY__ = {PingCommand.__COMMAND_NAME__: PingCommand(),
+                           EchoCommand.__COMMAND_NAME__: EchoCommand(),
+                           HelpCommand.__COMMAND_NAME__: HelpCommand()}
 
 def extract_potential_command(msg_text):
     body_split = msg_text.split(" ")
