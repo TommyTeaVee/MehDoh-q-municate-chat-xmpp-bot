@@ -34,7 +34,7 @@ class PingCommand(Command):
 
     def __init__(self):
         self.command = PingCommand.__COMMAND_NAME__
-        self.description = "Pings the bot."
+        self.description = "pings the bot"
         self.example_usage = "ping"
 
     def process(self, message, xmpp_client):
@@ -49,7 +49,7 @@ class EchoCommand(Command):
 
     def __init__(self):
         self.command = EchoCommand.__COMMAND_NAME__
-        self.description = "Echoes the provided text."
+        self.description = "echoes the provided text"
         self.example_usage = "echo <text>"
 
     def process(self, message, xmpp_client):
@@ -64,15 +64,26 @@ class HelpCommand(Command):
 
     def __init__(self):
         self.command = HelpCommand.__COMMAND_NAME__
-        self.description = "Provides an example how to use a particular command."
+        self.description = "provides an example how to use a particular command"
         self.example_usage = "help <command>"
 
     def process(self, message, xmpp_client):
         Command.process(self, message, xmpp_client)
 
+
+        command_to_help = command_argument.split(' ')[0]
+
+        result = None
+        try:
+            command_to_help_obj = __COMMANDS_DICTIONARY__[command_to_help]
+        except KeyError:
+            result = "Sorry pal, command '" + command_to_help + "' not found"
+        else:
+            result = "'" + command_to_help + "' command " + command_to_help_obj.description + ". Usage: " + command_to_help_obj.example_usage
+
         # send the result of a command processing
         #
-        xmpp_client.send_private_msg(dialog_id, "not implemented yet", from_jid)
+        xmpp_client.send_private_msg(dialog_id, result, from_jid)
 
 
 __COMMANDS_DICTIONARY__ = {PingCommand.__COMMAND_NAME__: PingCommand(),
