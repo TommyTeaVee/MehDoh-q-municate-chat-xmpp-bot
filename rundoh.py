@@ -5,7 +5,7 @@ __author__ = 'igorkhomenko'
 
 import sleekxmpp
 
-import commands_manager
+import commands
 import utils
 
 import logging
@@ -116,7 +116,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         # try to extract command
         body = msg['body']
 
-        potential_command = commands_manager.extract_potential_command(body)
+        potential_command = commands.extract_potential_command(body)
         print(potential_command)
 
         dialog_id = utils.extract_dialog_id(msg)
@@ -124,11 +124,11 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         # trying to find a command
         #
         try:
-            command = commands_manager.__COMMANDS_DICTIONARY__[potential_command]
+            command = commands.__COMMANDS_DICTIONARY__[potential_command]
         except KeyError:
              # there is no such command
              #
-            text = "Hey! Available commands are: " + ','.join(commands_manager.__COMMANDS_DICTIONARY__.keys()) + ". To get an example of the command usage enter 'help <command>'"
+            text = "Hey! Available commands are: " + ','.join(commands.__COMMANDS_DICTIONARY__.keys()) + ". To get an example of the command usage enter 'help <command>'"
             self.send_private_msg(dialog_id, text, from_jid)
         else:
             command.process(msg, self)
