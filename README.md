@@ -1,7 +1,7 @@
 MehDoh! Q-municate Chat XMPP bot
 ===============
 
-# Run
+# How to run
 Use next command to run a bot:
 ```bash
 nohup python rundoh.py &
@@ -16,7 +16,7 @@ Then make the script executable:
 sudo chmod +x /etc/init.d/mehdoh
 ```
 
-Next you can start the mehdoh bit with this command:
+Next you can start the mehdoh bot with this command:
 ```bash
 sudo /etc/init.d/mehdoh start
 ```
