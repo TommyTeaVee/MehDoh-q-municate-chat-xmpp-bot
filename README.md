@@ -1,4 +1,7 @@
-MehDoh!-xmpp-bot
+MehDoh! Q-municate Chat XMPP bot
 ===============
 
-The MehDoh! Chat XMPP bot
+# Run
+```bash
+nohup python rundoh.py &
+```
