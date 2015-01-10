@@ -17,7 +17,7 @@ case "$1" in
         ;;
     stop)
         echo "Stopping mehdoh bot"
-        killall rundoh.py
+        sudo pkill -f rundoh
         ;;
     *)
         echo "Usage: /etc/init.d/mehdoh start|stop"
