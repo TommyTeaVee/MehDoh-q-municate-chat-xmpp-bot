@@ -11,7 +11,7 @@ class HelpCommand(commands.Command):
         self.example_usage = "help <command>"
 
     def process(self, message, xmpp_client):
-        from_jid, dialog_id, command_argument = commands.Command.process(self, message, xmpp_client)
+        from_jid, command_argument = commands.Command.process(self, message, xmpp_client)
 
 
         command_to_help = command_argument.split(' ')[0]
@@ -26,4 +26,4 @@ class HelpCommand(commands.Command):
 
         # send the result of a command processing
         #
-        xmpp_client.send_private_msg(dialog_id, result, from_jid)
+        xmpp_client.send_private_msg(result, from_jid)

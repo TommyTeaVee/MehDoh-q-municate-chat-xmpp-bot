@@ -4,25 +4,18 @@
 __author__ = 'igorkhomenko'
 
 from sleekxmpp.xmlstream import ET
+import time
 
-def extract_dialog_id(message):
-    """
-    Extracts a dialog_id from a message
-    """
-
-    dialog_id_in = message.xml.find('{jabber:client}extraParams/{jabber:client}dialog_id')
-    return dialog_id_in.text
-
-def add_extra_params(msg, dialog_id):
+def add_extra_params(msg):
     """
     Adds 'extraParams' to a message
     """
 
     extra_params_out = ET.Element('{jabber:client}extraParams')
     #
-    dialog_id_out = ET.Element('{}dialog_id')
-    dialog_id_out.text = dialog_id
-    extra_params_out.append(dialog_id_out)
+    date_sent_out = ET.Element('{}date_sent')
+    date_sent_out.text = str(int(time.time()))
+    extra_params_out.append(date_sent_out)
     #
     save_to_history_out = ET.Element('{}save_to_history')
     save_to_history_out.text = "1"

@@ -11,8 +11,8 @@ class EchoCommand(commands.Command):
         self.example_usage = "echo <text>"
 
     def process(self, message, xmpp_client):
-        from_jid, dialog_id, command_argument = commands.Command.process(self, message, xmpp_client)
+        from_jid, command_argument = commands.Command.process(self, message, xmpp_client)
 
         # send the result of a command processing
         #
-        xmpp_client.send_private_msg(dialog_id, command_argument, from_jid)
+        xmpp_client.send_private_msg(command_argument, from_jid)

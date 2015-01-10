@@ -11,9 +11,8 @@ class Command:
     def process(self, message, xmpp_client):
         body = message['body']
         from_jid = message['from']
-        dialog_id = utils.extract_dialog_id(message)
         command_argument = body.replace(self.command + " ", "", 1)
-        return (from_jid, dialog_id, command_argument)
+        return (from_jid, command_argument)
 
     def __str__(self):
         return self.command

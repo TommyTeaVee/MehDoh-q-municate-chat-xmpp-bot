@@ -54,23 +54,23 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         self.add_event_handler("muc::%s::got_online" % self.room,
                                self.muc_online)
 
-    def send_group_msg(self, dialog_id, text="testing"):
+    def send_group_msg(self, text="testing"):
         new_message = self.make_message(mto=room_jid,
                       mbody=text,
                       mtype='groupchat')
 
-        utils.add_extra_params(new_message, dialog_id)
+        utils.add_extra_params(new_message)
 
         print("sending a group message: " + str(new_message))
 
         new_message.send()
 
-    def send_private_msg(self, dialog_id, text="testing", to=None):
+    def send_private_msg(self, text="testing", to=None):
         new_message = self.make_message(mto=to,
                       mbody=text,
                       mtype='chat')
 
-        utils.add_extra_params(new_message, dialog_id)
+        utils.add_extra_params(new_message)
 
         print("sending a private message: " + str(new_message))
 
@@ -119,8 +119,6 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         potential_command = commands.extract_potential_command(body)
         print(potential_command)
 
-        dialog_id = utils.extract_dialog_id(msg)
-
         # trying to find a command
         #
         try:
@@ -129,7 +127,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
              # there is no such command
              #
             text = "Hey! Available commands are: " + ','.join(commands.__COMMANDS_DICTIONARY__.keys()) + ". To get an example of the command usage enter 'help <command>'"
-            self.send_private_msg(dialog_id, text, from_jid)
+            self.send_private_msg(text, from_jid)
         else:
             command.process(msg, self)
 
