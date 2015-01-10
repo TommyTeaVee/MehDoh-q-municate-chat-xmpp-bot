@@ -61,7 +61,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         utils.add_extra_params(new_message)
 
-        print("sending a group message: " + str(new_message))
+        utils.log("SND: " + str(new_message))
 
         new_message.send()
 
@@ -72,7 +72,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         utils.add_extra_params(new_message)
 
-        print("sending a private message: " + str(new_message))
+        utils.log("SND: " + str(new_message))
 
         new_message.send()
 
@@ -88,7 +88,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
                      data.
         """
 
-        print("logged in")
+        utils.log("logged in")
 
         self.send_presence()
 
@@ -109,7 +109,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
             return
 
 
-        print(msg)
+        utils.log("RCV: " + str(msg))
 
         from_jid = msg['from']
 
@@ -117,7 +117,6 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         body = msg['body']
 
         potential_command = commands.extract_potential_command(body)
-        print(potential_command)
 
         # trying to find a command
         #
@@ -139,23 +138,23 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         if delay_element is not None:
             return
 
-
-        print(msg)
+        utils.log(msg)
 
 
     def muc_online(self, presence):
-        print("RCV:" + str(presence))
+        utils.log("RCV:" + str(presence))
 
         ujid = str(presence["muc"]["jid"])
         ptype = presence["type"]
 
         if config["user_id"] in ujid and ptype is "available":
-            print("joined room")
+            utils.log("joined room")
+
             self.send_group_msg(config["dialog_id"])
 
 
 if __name__ == '__main__':
-    print("starting...")
+    utils.log("starting...")
 
     room_nick = config["user_id"]
 
@@ -167,7 +166,7 @@ if __name__ == '__main__':
 
     # Connect to the XMPP server and start processing XMPP stanzas.
     if xmpp.connect():
-        print("connected")
+        utils.log("connected")
         # If you do not have the dnspython library installed, you will need
         # to manually specify the name of the server if it does not match
         # the one in the JID. For example, to use Google Talk you would
@@ -176,6 +175,6 @@ if __name__ == '__main__':
         # if xmpp.connect(('talk.google.com', 5222)):
         #     ...
         xmpp.process(block=True)
-        print("Done")
+        utils.log("Done")
     else:
-        print("Unable to connect.")
+        utils.log("Unable to connect.")

@@ -3,6 +3,8 @@
 
 __author__ = 'igorkhomenko'
 
+__DEBUG__ = False
+
 from sleekxmpp.xmlstream import ET
 import time
 
@@ -22,3 +24,7 @@ def add_extra_params(msg):
     extra_params_out.append(save_to_history_out)
 
     msg.append(extra_params_out)
+
+def log(str):
+    if __DEBUG__:
+        print(str)
