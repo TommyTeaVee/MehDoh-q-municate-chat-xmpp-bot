@@ -14,12 +14,14 @@ import logging
 logging.basicConfig()
 
 config = {"app_id": "12496",
+
           "user_id": "2118126",
           "user_password": "mehdoh00",
-          "dialog_id": "5474a58d535c12b4f9002b34"}
+
+          "initial_group_dialog_id": "5474a58d535c12b4f9002b34"}
 
 user_jid = config["user_id"] + "-" + config["app_id"] + "@chat.quickblox.com/" + str(uuid.uuid4())
-room_jid = config["app_id"] + "_" + config["dialog_id"] + "@muc.chat.quickblox.com"
+initial_room_jid = config["app_id"] + "_" + config["initial_group_dialog_id"] + "@muc.chat.quickblox.com"
 
 
 class MehDohBot(sleekxmpp.ClientXMPP):
@@ -35,18 +37,18 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         # and the XML streams are ready for use. We want to
         # listen for this event so that we we can initialize
         # our roster.
-        self.add_event_handler("session_start", self.start)
+        self.add_event_handler("session_start", self.on_start)
 
         # The groupchat_message event is triggered whenever a message
         # stanza is received from any chat room. If you also also
         # register a handler for the 'message' event, MUC messages
         # will be processed by both handlers.
-        self.add_event_handler("groupchat_message", self.muc_message)
+        self.add_event_handler("groupchat_message", self.on_muc_message)
 
         # The message event is triggered whenever a message
         # stanza is received. Be aware that that includes
         # MUC messages and error messages.
-        self.add_event_handler("message", self.message)
+        self.add_event_handler("message", self.on_message)
 
         # The groupchat_presence event is triggered whenever a
         # presence stanza is received from any chat room, including
@@ -54,7 +56,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         # to a single room, use the events muc::room@server::presence,
         # muc::room@server::got_online, or muc::room@server::got_offline.
         self.add_event_handler("muc::%s::got_online" % self.room,
-                               self.muc_online)
+                               self.on_muc_online)
 
     def send_group_msg(self, text="testing"):
         new_message = self.make_message(mto=room_jid,
@@ -78,7 +80,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
 
         new_message.send()
 
-    def start(self, event):
+    def on_start(self, event):
         """
         Process the session_start event.
         Typical actions for the session_start event are
@@ -101,7 +103,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         #                                 # password=the_room_password,
         #                                 wait=True)
 
-    def message(self, msg):
+    def on_message(self, msg):
         if msg['type'] == "groupchat":
             return
 
@@ -133,7 +135,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
             command.process(msg, self)
 
 
-    def muc_message(self, msg):
+    def on_muc_message(self, msg):
 
         # Ignore messages from offline storage, track only real time messages
         delay_element  = msg.xml.find('{urn:xmpp:delay}delay')
@@ -143,7 +145,7 @@ class MehDohBot(sleekxmpp.ClientXMPP):
         utils.log(msg)
 
 
-    def muc_online(self, presence):
+    def on_muc_online(self, presence):
         utils.log("RCV:" + str(presence))
 
         ujid = str(presence["muc"]["jid"])
@@ -163,7 +165,7 @@ if __name__ == '__main__':
     # Setup the MehDohBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
     # not matter.
-    xmpp = MehDohBot(user_jid, config["user_password"], room_jid, room_nick)
+    xmpp = MehDohBot(user_jid, config["user_password"], initial_room_jid, room_nick)
     xmpp.register_plugin('xep_0045') # Multi-User Chat
 
     # Connect to the XMPP server and start processing XMPP stanzas.
