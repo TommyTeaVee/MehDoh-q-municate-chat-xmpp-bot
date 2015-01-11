@@ -13,10 +13,11 @@ To get an example of the command usage enter  **help 'command'**
 All the commands are available as a part of **commands** module.
 To write new comamnd follow next steps:
 
-1. Create a new python file with a single class inherited from **commands.Command** and put this file inside **commands** folder.
+1. Create a new python file with a single class inherited from **commands.Command** and put this file inside the **commands** folder.
 2. Set the variable **__COMMAND_NAME__** to command's name
 3. Define the **__init__** method and set 3 fields inside: **command, description, example_usage**
 4. Define the **process** method. This method defines the behaviour if a new command. 
+5. Go to **__init__.py** file inside the **commands** folder and add your new command to **__COMMANDS_DICTIONARY__** variable.
 
 # How to run
 Use next command to run a bot:
