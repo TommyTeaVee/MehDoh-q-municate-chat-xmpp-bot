@@ -9,6 +9,12 @@ Bot has its own command set. To list all available commands just send something 
 
 To get an example of the command usage enter  **help 'command'**
 
+# Write new command
+All the commands are available as a part of **commands** module.
+To write new comamnd follow next steps:
+1. Create a new python file with a single class inherited from **commands.Command** and put this file inside **commands** folder.
+2. 
+
 # How to run
 Use next command to run a bot:
 ```bash
