@@ -5,19 +5,9 @@ MehDoh! Q-municate Chat XMPP bot
 Extensible XMPP Chat bot which works with https://qm.quickblox.com 
 
 # Command set
-There are 3 available commands for bot:
-* ping
+Bot has it's own command set. To list all available commands just send something to bot. It will answer with a list of available commands.
 
-```bash
-ping
-```
-
-Answer:
-```bash
-pong
-```
-* echo
-* help
+To get an example of the command usage enter  **help <command>**
 
 # How to run
 Use next command to run a bot:
