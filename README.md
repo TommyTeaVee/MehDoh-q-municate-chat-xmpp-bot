@@ -7,7 +7,7 @@ Extensible XMPP Chat bot which works with https://qm.quickblox.com
 # Command set
 Bot has its own command set. To list all available commands just send something to bot. It will answer with a list of available commands.
 
-To get an example of the command usage enter  **help <command>**
+To get an example of the command usage enter  **help 'command'**
 
 # How to run
 Use next command to run a bot:
