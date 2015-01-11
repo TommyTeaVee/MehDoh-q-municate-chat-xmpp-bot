@@ -3,7 +3,7 @@
 
 __author__ = 'igorkhomenko'
 
-__DEBUG__ = False
+__DEBUG__ = True
 
 from sleekxmpp.xmlstream import ET
 import time

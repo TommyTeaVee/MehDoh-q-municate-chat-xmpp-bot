@@ -8,6 +8,8 @@ import sleekxmpp
 import commands
 import utils
 
+import uuid
+
 import logging
 logging.basicConfig()
 
@@ -16,7 +18,7 @@ config = {"app_id": "12496",
           "user_password": "mehdoh00",
           "dialog_id": "5474a58d535c12b4f9002b34"}
 
-user_jid = config["user_id"] + "-" + config["app_id"] + "@chat.quickblox.com/macbookpro"
+user_jid = config["user_id"] + "-" + config["app_id"] + "@chat.quickblox.com/" + str(uuid.uuid4())
 room_jid = config["app_id"] + "_" + config["dialog_id"] + "@muc.chat.quickblox.com"
 
 
