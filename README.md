@@ -6,9 +6,9 @@ Extensible XMPP Chat bot which works with https://qm.quickblox.com
 
 # Command set
 There are 3 available commands for bot:
-1) ping
-2) echo
-3) help
+* ping
+* echo
+* help
 
 # How to run
 Use next command to run a bot:
