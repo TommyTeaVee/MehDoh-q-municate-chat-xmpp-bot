@@ -52,4 +52,5 @@ sudo update-rc.d mehdoh defaults
 This creates a link to /etc/init.d/mehdoh in directories from /etc/rc0.d through to /etc/rc6.d. When Linux boots up or shuts down, it looks in these folders to see if any scripts or programs need to be run. When I restart my laptop the mehdoh bot starts automatically.
 
 # Live demo
-Here is a live working bot on https://qm.quickblox.com. Go to search box and add the user with name **mehdoh** to contacts. After that you can try to use available commands.
+Here is a live working bot on https://qm.quickblox.com. Go to search box and add the user with name **I am IgorK
+** to contacts. After that you can try to use available commands.
