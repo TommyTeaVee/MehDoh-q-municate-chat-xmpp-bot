@@ -13,9 +13,9 @@ import uuid
 import logging
 logging.basicConfig()
 
-config = {"app_id": "12496",
+config = {"app_id": "13318",
 
-          "user_id": "2118126",
+          "user_id": "2740296",
           "user_password": "mehdoh00",
 
           "initial_group_dialog_id": "5474a58d535c12b4f9002b34"}
